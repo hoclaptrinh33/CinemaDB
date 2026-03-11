@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title>Helpful Voice Badge</title>
+  <desc>Bronze placeholder badge for helpful voice.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fb7185"/>
+      <stop offset="100%" stop-color="#be123c"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+  <path d="M34 68c0-18 14-32 32-32s32 14 32 32-14 32-32 32h-2l-16 12 4-18C41 88 34 79 34 68z" fill="#fff1f2" opacity="0.95"/>
+  <path d="M52 66h24M52 78h16" stroke="#9f1239" stroke-width="6" stroke-linecap="round"/>
+  <text x="64" y="24" text-anchor="middle" font-family="Verdana, sans-serif" font-size="13" font-weight="700" fill="#fff1f2">HELPFUL</text>
+</svg>

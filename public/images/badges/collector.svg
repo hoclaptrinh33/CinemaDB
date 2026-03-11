@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title>Collector Badge</title>
+  <desc>Bronze placeholder badge for collector.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="100%" stop-color="#166534"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+  <rect x="34" y="34" width="24" height="24" rx="4" fill="#ecfdf5"/>
+  <rect x="70" y="34" width="24" height="24" rx="4" fill="#d1fae5"/>
+  <rect x="34" y="70" width="24" height="24" rx="4" fill="#d1fae5"/>
+  <rect x="70" y="70" width="24" height="24" rx="4" fill="#ecfdf5"/>
+  <text x="64" y="118" text-anchor="middle" font-family="Verdana, sans-serif" font-size="14" font-weight="700" fill="#ecfdf5">COLLECTOR</text>
+</svg>

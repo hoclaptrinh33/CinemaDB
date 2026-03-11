@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title>Early Bird Badge</title>
+  <desc>Gold placeholder badge for early bird.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#facc15"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+  <circle cx="64" cy="64" r="26" fill="#fff7ed" opacity="0.95"/>
+  <path d="M64 48v18l12 8" fill="none" stroke="#c2410c" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M28 40c10-18 24-24 36-20" fill="none" stroke="#fff7ed" stroke-width="6" stroke-linecap="round"/>
+  <text x="64" y="106" text-anchor="middle" font-family="Verdana, sans-serif" font-size="14" font-weight="700" fill="#fff7ed">EARLY</text>
+</svg>

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title>Trusted Critic Badge</title>
+  <desc>Silver placeholder badge for trusted critic.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#0f766e"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+  <path d="M64 28l30 12v22c0 20-11 34-30 42-19-8-30-22-30-42V40z" fill="#ecfeff" opacity="0.95"/>
+  <path d="M50 62l10 10 18-20" fill="none" stroke="#0f766e" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="64" y="108" text-anchor="middle" font-family="Verdana, sans-serif" font-size="13" font-weight="700" fill="#ecfeff">TRUSTED</text>
+</svg>

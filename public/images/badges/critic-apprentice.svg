@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title>Critic Apprentice Badge</title>
+  <desc>Bronze placeholder badge for critic apprentice.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#9a3412"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+  <path d="M36 78l28-38 28 38" fill="none" stroke="#ffedd5" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="64" cy="58" r="10" fill="#ffedd5"/>
+  <text x="64" y="102" text-anchor="middle" font-family="Verdana, sans-serif" font-size="14" font-weight="700" fill="#fff7ed">APPRENTICE</text>
+</svg>

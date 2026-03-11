@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title>Critic Regular Badge</title>
+  <desc>Silver placeholder badge for critic regular.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#94a3b8"/>
+      <stop offset="100%" stop-color="#475569"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+  <rect x="34" y="32" width="60" height="46" rx="8" fill="#f8fafc" opacity="0.95"/>
+  <path d="M44 46h40M44 56h28M44 66h34" stroke="#334155" stroke-width="6" stroke-linecap="round"/>
+  <text x="64" y="100" text-anchor="middle" font-family="Verdana, sans-serif" font-size="14" font-weight="700" fill="#f8fafc">REGULAR</text>
+</svg>

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title>Cinephile Badge</title>
+  <desc>Silver placeholder badge for cinephile.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#1d4ed8"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+  <rect x="28" y="36" width="72" height="56" rx="10" fill="#eef2ff" opacity="0.95"/>
+  <circle cx="46" cy="54" r="6" fill="#4f46e5"/>
+  <circle cx="82" cy="54" r="6" fill="#4f46e5"/>
+  <path d="M50 74l14-10 14 10" fill="none" stroke="#4f46e5" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="64" y="108" text-anchor="middle" font-family="Verdana, sans-serif" font-size="14" font-weight="700" fill="#eef2ff">CINEPHILE</text>
+</svg>
