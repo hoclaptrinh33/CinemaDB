@@ -5,11 +5,11 @@ WORKDIR /app
 
 COPY composer.json composer.lock ./
 RUN composer install \
-        --no-dev \
-        --no-scripts \
-        --no-autoloader \
-        --ignore-platform-reqs \
-        --optimize-autoloader
+    --no-dev \
+    --no-scripts \
+    --no-autoloader \
+    --ignore-platform-reqs \
+    --optimize-autoloader
 
 
 # ─── Stage 2: Build frontend assets ──────────────────────────────────────────
@@ -27,7 +27,7 @@ RUN npm run build
 
 
 # ─── Stage 3: Production PHP image ────────────────────────────────────────────
-FROM php:8.2-fpm-bookworm
+FROM php:8.4-fpm-bookworm
 
 # Install nginx, supervisor, system libs + PHP extensions via install-php-extensions
 # (much faster than docker-php-ext-install — uses pre-built binaries)
@@ -35,21 +35,21 @@ ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/do
 
 RUN chmod +x /usr/local/bin/install-php-extensions \
     && apt-get update && apt-get install -y --no-install-recommends \
-        nginx \
-        supervisor \
-        unzip \
+    nginx \
+    supervisor \
+    unzip \
     && rm -rf /var/lib/apt/lists/* \
     && install-php-extensions \
-        pdo_mysql \
-        mbstring \
-        xml \
-        zip \
-        bcmath \
-        gd \
-        opcache \
-        pcntl \
-        sockets \
-        redis
+    pdo_mysql \
+    mbstring \
+    xml \
+    zip \
+    bcmath \
+    gd \
+    opcache \
+    pcntl \
+    sockets \
+    redis
 
 # Pull Composer binary from official image
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
