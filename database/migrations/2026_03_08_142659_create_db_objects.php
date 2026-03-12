@@ -13,6 +13,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (DB::connection()->getDriverName() !== 'mysql') {
+            return; // MySQL-specific objects (triggers, procedures, views) — skip on other drivers
+        }
+
         // ── Drop existing objects (safe for migrate:fresh re-runs) ───────────
         DB::unprepared('DROP PROCEDURE IF EXISTS prc_add_review');
         DB::unprepared('DROP PROCEDURE IF EXISTS prc_add_title');
@@ -41,6 +45,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        if (DB::connection()->getDriverName() !== 'mysql') {
+            return;
+        }
+
         // Drop procedures
         DB::unprepared('DROP PROCEDURE IF EXISTS prc_add_review');
         DB::unprepared('DROP PROCEDURE IF EXISTS prc_add_title');

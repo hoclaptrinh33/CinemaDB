@@ -7,6 +7,10 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (DB::connection()->getDriverName() !== 'mysql') {
+            return; // MySQL-specific triggers — skip on other drivers
+        }
+
         // Nomination count triggers
         DB::unprepared('DROP TRIGGER IF EXISTS trg_nomination_count_insert');
         DB::unprepared('DROP TRIGGER IF EXISTS trg_nomination_count_delete');
@@ -52,6 +56,10 @@ return new class extends Migration
 
     public function down(): void
     {
+        if (DB::connection()->getDriverName() !== 'mysql') {
+            return;
+        }
+
         DB::unprepared('DROP TRIGGER IF EXISTS trg_nomination_count_insert');
         DB::unprepared('DROP TRIGGER IF EXISTS trg_nomination_count_delete');
         DB::unprepared('DROP TRIGGER IF EXISTS trg_comment_like_insert');
