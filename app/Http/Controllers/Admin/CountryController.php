@@ -17,7 +17,7 @@ class CountryController extends Controller
         $countries = Country::when(request('search'), fn($q, $v) =>
         $q->where('country_name', 'LIKE', "%{$v}%")
             ->orWhere('iso_code', 'LIKE', "%{$v}%"))
-            ->withCount('titles')
+            ->withCount('studios')
             ->orderBy('country_name')
             ->paginate(30)
             ->withQueryString();

@@ -29,6 +29,10 @@ return new class extends Migration
             $table->index('collection_id');
         });
 
+        if (DB::connection()->getDriverName() !== 'mysql') {
+            return;
+        }
+
         // Triggers to maintain collections.nomination_count
         DB::unprepared('DROP TRIGGER IF EXISTS trg_collection_nom_insert');
         DB::unprepared('DROP TRIGGER IF EXISTS trg_collection_nom_delete');
@@ -54,6 +58,12 @@ return new class extends Migration
 
     public function down(): void
     {
+        if (DB::connection()->getDriverName() !== 'mysql') {
+            Schema::dropIfExists('collection_nominations');
+
+            return;
+        }
+
         DB::unprepared('DROP TRIGGER IF EXISTS trg_collection_nom_insert');
         DB::unprepared('DROP TRIGGER IF EXISTS trg_collection_nom_delete');
         Schema::dropIfExists('collection_nominations');

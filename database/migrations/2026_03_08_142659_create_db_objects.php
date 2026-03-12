@@ -14,7 +14,7 @@ return new class extends Migration
     public function up(): void
     {
         if (DB::connection()->getDriverName() !== 'mysql') {
-            return; // MySQL-specific objects (triggers, procedures, views) — skip on other drivers
+            return;
         }
 
         // ── Drop existing objects (safe for migrate:fresh re-runs) ───────────

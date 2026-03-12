@@ -127,7 +127,7 @@ onBeforeUnmount(() => {
     <div class="min-h-screen flex flex-col">
         <!-- ── HEADER ── -->
         <header ref="headerRef" class="glass fixed inset-x-0 top-0 z-50 border-b border-[var(--color-border)]">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center gap-3">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center gap-1.5 lg:gap-3">
                 <!-- Logo -->
                 <Link :href="route('home')" class="shrink-0 flex items-center gap-2 group">
                     <div class="w-8 h-8 rounded-lg bg-[var(--color-accent)] flex items-center justify-center">
@@ -141,8 +141,8 @@ onBeforeUnmount(() => {
                     </span>
                 </Link>
 
-                <!-- Nav links (desktop) -->
-                <nav class="hidden md:flex items-center gap-1 ml-2">
+                <!-- Nav links (desktop - changed from md to lg) -->
+                <nav class="hidden lg:flex items-center gap-1 ml-2">
                     <Link
                         v-for="link in [{ label: t('nav.home'), route: 'home' }, { label: t('nav.movies'), route: 'titles.index' }, { label: t('nav.leaderboard'), route: 'leaderboards.index' }]"
                         :key="link.route"
@@ -165,13 +165,15 @@ onBeforeUnmount(() => {
                     </svg>
                 </button>
 
-                <LanguageSwitcher class="hidden md:flex" />
+                <LanguageSwitcher class="hidden lg:flex" />
 
                 <template v-if="auth.user">
-                    <!-- Admin link -->
-                    <Link v-if="auth.can?.accessAdmin" :href="route('admin.dashboard')" class="hidden md:inline-flex btn btn-ghost text-xs !py-1.5 !px-3">
-                        Admin
-                    </Link>
+                    <!-- Admin link (Strictly hidden on mobile) -->
+                    <div class="hidden lg:block">
+                        <Link v-if="auth.can?.accessAdmin" :href="route('admin.dashboard')" class="btn btn-ghost text-xs !py-1.5 !px-3">
+                            Admin
+                        </Link>
+                    </div>
 
                     <!-- 🔔 Bell icon -->
                     <div class="relative" data-notif-btn>
@@ -258,26 +260,26 @@ onBeforeUnmount(() => {
                         </Transition>
                     </div>
 
-                    <!-- Avatar + username → link to profile -->
-                    <Link :href="route('profile.edit')" class="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                    <!-- Avatar + username → link to profile (Hidden on mobile/tablet) -->
+                    <Link :href="route('profile.edit')" class="hidden lg:flex items-center gap-2 hover:opacity-80 transition-opacity">
                         <div class="w-8 h-8 rounded-full bg-[var(--color-accent)] flex items-center justify-center text-white text-sm font-bold font-display overflow-hidden">
                             <img v-if="auth.user.avatar_url" :src="auth.user.avatar_url" :alt="auth.user.username" class="w-full h-full object-cover" />
                             <span v-else>{{ auth.user.username[0].toUpperCase() }}</span>
                         </div>
-                        <span class="text-sm text-[var(--color-text-secondary)] hidden lg:block">{{ auth.user.username }}</span>
+                        <span class="text-sm text-[var(--color-text-secondary)] hidden xl:block">{{ auth.user.username }}</span>
                     </Link>
                 </template>
                 <template v-else>
-                    <div class="hidden md:flex items-center gap-2">
+                    <div class="hidden lg:flex items-center gap-2">
                         <Link :href="route('login')" class="btn btn-ghost text-sm">{{ $t('nav.login') }}</Link>
                         <Link :href="route('register')" class="btn btn-primary text-sm">{{ $t('nav.register') }}</Link>
                     </div>
                 </template>
 
-                <!-- ≡ Hamburger — always visible when logged in, mobile only otherwise -->
+                <!-- ≡ Hamburger — visible on all screens smaller than lg -->
                 <button
                     data-drawer-btn
-                    :class="['btn btn-ghost !px-2 !py-2', auth.user ? 'flex' : 'md:hidden flex']"
+                    class="btn btn-ghost !px-2 !py-2 flex lg:hidden"
                     aria-label="Menu"
                     @click.stop="toggleDrawer"
                 >

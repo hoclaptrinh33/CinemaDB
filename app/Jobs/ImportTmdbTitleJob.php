@@ -26,8 +26,13 @@ class ImportTmdbTitleJob implements ShouldQueue
 
     public function handle(TmdbImportService $importer): void
     {
+        // Bỏ qua nếu admin đã hủy job này trước khi worker nhận được
         if ($this->logId) {
-            TmdbImportLog::where('id', $this->logId)->update(['status' => 'processing']);
+            $log = TmdbImportLog::find($this->logId);
+            if (!$log || $log->status === 'cancelled') {
+                return;
+            }
+            $log->update(['status' => 'processing']);
         }
 
         $this->type === 'tv'

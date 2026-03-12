@@ -12,7 +12,7 @@ RUN composer install \
     --optimize-autoloader
 
 
-# ─── Stage 2: Build frontend assets ──────────────────────────────────────────
+# ─── Stage 1: Build frontend assets ──────────────────────────────────────────
 FROM node:22-alpine AS assets
 
 WORKDIR /app
@@ -21,27 +21,32 @@ COPY package.json package-lock.json ./
 RUN npm ci --legacy-peer-deps
 
 COPY . .
-# Ziggy reads vendor/tightenco/ziggy at build time — copy from composer stage
 COPY --from=vendor /app/vendor ./vendor
 RUN npm run build
 
 
-# ─── Stage 3: Production PHP image ────────────────────────────────────────────
+# ─── Stage 2: Production PHP image ────────────────────────────────────────────
 FROM php:8.4-fpm-bookworm
 
-# Install nginx, supervisor, system libs + PHP extensions via install-php-extensions
-# (much faster than docker-php-ext-install — uses pre-built binaries)
-ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
-
-RUN chmod +x /usr/local/bin/install-php-extensions \
-    && apt-get update && apt-get install -y --no-install-recommends \
+# Install nginx, supervisor, and required system libraries in a single layer
+# (apt-get update + install in same RUN avoids stale cache issues)
+RUN apt-get update && apt-get install -y --no-install-recommends \
     nginx \
     supervisor \
+    curl \
     unzip \
-    && rm -rf /var/lib/apt/lists/* \
-    && install-php-extensions \
-    pdo_mysql \
-    pdo_pgsql \
+    libpng-dev \
+    libjpeg-dev \
+    libwebp-dev \
+    libzip-dev \
+    libxml2-dev \
+    libonig-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install PHP extensions required by this Laravel app
+RUN docker-php-ext-configure gd --with-jpeg --with-webp \
+    && docker-php-ext-install -j"$(nproc)" \
+    pdo pdo_mysql \
     mbstring \
     xml \
     zip \
@@ -49,21 +54,26 @@ RUN chmod +x /usr/local/bin/install-php-extensions \
     gd \
     opcache \
     pcntl \
-    sockets \
-    redis
+    sockets
+
+# Install Redis PHP extension from PECL
+RUN pecl install redis \
+    && docker-php-ext-enable redis \
+    && rm -rf /tmp/pear
 
 # Pull Composer binary from official image
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# ── Copy vendor from composer stage ───────────────────────────────────────────
+# ── Copy vendor dependencies from Composer stage ──────────────────────────────
 COPY --from=vendor /app/vendor ./vendor
 
 # ── Copy application source ────────────────────────────────────────────────────
+# (vendor/ is excluded via .dockerignore so the container-built vendor/ is kept)
 COPY . .
 
-# ── Copy built frontend assets from Stage 2 ───────────────────────────────────
+# ── Copy built frontend assets from Stage 1 ───────────────────────────────────
 COPY --from=assets /app/public/build ./public/build
 
 # ── Finalise Composer autoloader and run package discovery ────────────────────

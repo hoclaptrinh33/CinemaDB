@@ -8,7 +8,7 @@ return new class extends Migration
     public function up(): void
     {
         if (DB::connection()->getDriverName() !== 'mysql') {
-            return; // MySQL-specific triggers — skip on other drivers
+            return;
         }
 
         // Nomination count triggers

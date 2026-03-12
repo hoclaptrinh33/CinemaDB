@@ -26,6 +26,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'reputation',
         'avatar_path',
         'cover_path',
+        'email_verified_at',
     ];
 
     // ── Accessors ─────────────────────────────────────────────────────────

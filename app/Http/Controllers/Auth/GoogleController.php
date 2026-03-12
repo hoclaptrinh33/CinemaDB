@@ -27,13 +27,13 @@ class GoogleController extends Controller
             // Link google_id and mark email as verified if not already
             $updates = [];
             if (! $user->google_id) {
-                $updates['google_id'] = $googleUser->getId();
+                $user->google_id = $googleUser->getId();
             }
             if (! $user->email_verified_at) {
-                $updates['email_verified_at'] = now();
+                $user->email_verified_at = now();
             }
-            if ($updates) {
-                $user->update($updates);
+            if ($user->isDirty()) {
+                $user->save();
             }
         } else {
             // New user — create and mark verified immediately

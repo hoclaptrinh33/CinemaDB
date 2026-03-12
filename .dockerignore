@@ -15,7 +15,6 @@ node_modules
 vendor
 public/hot
 public/build
-# Symlink created by `php artisan storage:link` — causes tar error on Windows
 public/storage
 
 # Laravel framework cache (generated at runtime)

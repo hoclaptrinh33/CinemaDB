@@ -1,6 +1,7 @@
-﻿<script setup>
+<script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useForm } from '@inertiajs/vue3';
+import axios from 'axios';
 import AdminLayout from '@/Layouts/AdminLayout.vue';
 import Button from '@/Components/UI/Button.vue';
 
@@ -24,21 +25,63 @@ const tmdbMovieUrl = computed(() =>
 );
 
 // Live log polling
-const logs      = ref([]);
-const totalLogs = ref(0);
-const polling   = ref(null);
-const logError  = ref(false);
+const logs           = ref([]);
+const stats          = ref({ total: 0, done_count: 0, failed_count: 0, pending_count: 0, cancelled_count: 0 });
+const polling        = ref(null);
+const logError       = ref(false);
+const cancellingAll  = ref(false);
+const cancellingIds  = ref(new Set());
 
 async function fetchLogs() {
     try {
         const res = await fetch(route('admin.tmdb-import.logs'));
         if (!res.ok) throw new Error();
         const data = await res.json();
-        logs.value      = data.logs;
-        totalLogs.value = data.total;
-        logError.value  = false;
+        logs.value  = data.logs;
+        // Dùng aggregate stats từ server (chính xác cho toàn bộ DB)
+        stats.value = {
+            total:           data.total,
+            done_count:      data.done_count,
+            failed_count:    data.failed_count,
+            pending_count:   data.pending_count,
+            cancelled_count: data.cancelled_count,
+        };
+        logError.value = false;
     } catch {
         logError.value = true;
+    }
+}
+
+// Hủy một job cụ thể
+async function cancelJob(log) {
+    if (cancellingIds.value.has(log.id)) return;
+    cancellingIds.value = new Set([...cancellingIds.value, log.id]);
+    try {
+        // Sử dụng axios (tự động kèm CSRF token qua bootstrap.js)
+        await axios.delete(route('admin.tmdb-import.cancel', log.id));
+        await fetchLogs();
+    } catch (e) {
+        console.error('Hủy job thất bại:', e?.response?.data?.message ?? e.message);
+    } finally {
+        const next = new Set(cancellingIds.value);
+        next.delete(log.id);
+        cancellingIds.value = next;
+    }
+}
+
+// Hủy tất cả job pending
+async function cancelAll() {
+    if (cancellingAll.value) return;
+    if (!confirm(`Bạn có chắc muốn hủy tất cả ${stats.value.pending_count} job đang chờ không?`)) return;
+    cancellingAll.value = true;
+    try {
+        // Sử dụng axios (tự động kèm CSRF token qua bootstrap.js)
+        await axios.post(route('admin.tmdb-import.cancel-all'));
+        await fetchLogs();
+    } catch (e) {
+        console.error('Hủy tất cả thất bại:', e?.response?.data?.message ?? e.message);
+    } finally {
+        cancellingAll.value = false;
     }
 }
 
@@ -50,6 +93,7 @@ const statusConfig = {
     processing: { label: 'Đang xử lý', dot: 'bg-blue-400 animate-ping',    text: 'text-blue-400',   bg: 'bg-blue-900/20' },
     done:       { label: 'Xong',       dot: 'bg-green-400',                 text: 'text-green-400',  bg: 'bg-green-900/10' },
     failed:     { label: 'Lỗi',        dot: 'bg-red-400',                   text: 'text-red-400',    bg: 'bg-red-900/20' },
+    cancelled:  { label: 'Đã hủy',     dot: 'bg-gray-500',                  text: 'text-gray-400',   bg: '' },
 };
 
 function timeAgo(dateStr) {
@@ -59,10 +103,12 @@ function timeAgo(dateStr) {
     return `${Math.floor(diff / 3600)}h trước`;
 }
 
-const pendingCount  = computed(() => logs.value.filter(l => l.status === 'pending' || l.status === 'processing').length);
-const doneCount     = computed(() => logs.value.filter(l => l.status === 'done').length);
-const failedCount   = computed(() => logs.value.filter(l => l.status === 'failed').length);
-const hiddenCount   = computed(() => Math.max(0, totalLogs.value - logs.value.length));
+// Số liệu đều lấy từ server aggregate (chính xác với toàn bộ DB)
+const pendingCount    = computed(() => stats.value.pending_count);
+const doneCount       = computed(() => stats.value.done_count);
+const failedCount     = computed(() => stats.value.failed_count);
+const cancelledCount  = computed(() => stats.value.cancelled_count);
+const hiddenCount     = computed(() => Math.max(0, stats.value.total - logs.value.length));
 </script>
 
 <template>
@@ -183,10 +229,22 @@ const hiddenCount   = computed(() => Math.max(0, totalLogs.value - logs.value.le
                     <h2 class="font-display font-bold text-xl text-[var(--color-text-primary)]">Tiến trình</h2>
                     <p class="text-[var(--color-text-muted)] text-xs mt-0.5">Tự động làm mới mỗi 3 giây</p>
                 </div>
-                <div class="flex items-center gap-1.5 text-xs text-green-400">
-                    <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse inline-block"></span>
-                    LIVE
-                    <span v-if="pendingCount > 0" class="ml-1 px-1.5 py-0.5 bg-blue-900/40 text-blue-300 rounded font-mono">{{ pendingCount }} đang chạy</span>
+                <div class="flex items-center gap-2 flex-wrap">
+                    <div class="flex items-center gap-1.5 text-xs text-green-400">
+                        <span class="w-2 h-2 rounded-full bg-green-400 animate-pulse inline-block"></span>
+                        LIVE
+                        <span v-if="pendingCount > 0" class="ml-1 px-1.5 py-0.5 bg-blue-900/40 text-blue-300 rounded font-mono">{{ pendingCount }} đang chờ</span>
+                    </div>
+                    <!-- Nút hủy tất cả -->
+                    <button
+                        v-if="pendingCount > 0"
+                        @click="cancelAll"
+                        :disabled="cancellingAll"
+                        class="px-2.5 py-1 rounded-lg text-xs font-medium bg-red-950/50 text-red-400 border border-red-900/40 hover:bg-red-900/40 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                    >
+                        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg>
+                        {{ cancellingAll ? 'Đang hủy...' : 'Hủy tất cả' }}
+                    </button>
                 </div>
             </div>
 
@@ -223,14 +281,27 @@ const hiddenCount   = computed(() => Math.max(0, totalLogs.value - logs.value.le
                             <p v-else-if="log.status === 'processing'" class="text-xs text-blue-300 mt-0.5 italic">Đang tải từ TMDB…</p>
                             <p v-if="log.error_message" class="text-xs text-red-400 mt-1 line-clamp-2">{{ log.error_message }}</p>
                         </div>
-                        <span class="text-xs text-[var(--color-text-muted)] shrink-0 mt-0.5">{{ timeAgo(log.created_at) }}</span>
+                        <div class="flex items-center gap-2 shrink-0">
+                            <!-- Nút hủy cho từng job pending -->
+                            <button
+                                v-if="log.status === 'pending'"
+                                @click="cancelJob(log)"
+                                :disabled="cancellingIds.has(log.id)"
+                                class="p-1 rounded text-gray-500 hover:text-red-400 hover:bg-red-950/30 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                                title="Hủy job này"
+                            >
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg>
+                            </button>
+                            <span class="text-xs text-[var(--color-text-muted)] mt-0.5">{{ timeAgo(log.created_at) }}</span>
+                        </div>
                     </div>
                 </div>
                 <div class="px-4 py-2.5 bg-[var(--color-bg-base)] border-t border-[var(--color-border)] flex gap-4 text-xs text-[var(--color-text-muted)] flex-wrap">
-                    <span>Tổng: <strong class="text-[var(--color-text-primary)]">{{ totalLogs }}</strong></span>
+                    <span>Tổng: <strong class="text-[var(--color-text-primary)]">{{ stats.total }}</strong></span>
                     <span class="text-green-400">✓ {{ doneCount }} xong</span>
                     <span class="text-yellow-400">⏳ {{ pendingCount }} chạy</span>
                     <span class="text-red-400">✗ {{ failedCount }} lỗi</span>
+                    <span v-if="cancelledCount > 0" class="text-gray-400">⊘ {{ cancelledCount }} đã hủy</span>
                     <span v-if="hiddenCount > 0" class="text-[var(--color-text-muted)] italic">+ {{ hiddenCount }} ẩn (đã xong)</span>
                 </div>
             </div>

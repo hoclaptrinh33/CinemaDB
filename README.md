@@ -22,43 +22,47 @@ CinemaDB là một nền tảng quản lý hồ sơ điện ảnh cộng đồng
 ## Tech Stack
 
 ### Backend
-| Thành phần | Công nghệ | Version |
-|---|---|---|
-| Framework | Laravel | 12.x |
-| Ngôn ngữ | PHP | 8.4 |
-| Database | MySQL | 8.4 |
-| Auth | Laravel Breeze + Socialite | — |
-| Search | Laravel Scout + Meilisearch | — |
-| Media | Cloudinary | — |
-| Queue | Database driver | — |
-| Permission | spatie/laravel-permission | ^6.x |
-| Slug | spatie/laravel-sluggable | ^3.x |
-| Image | Intervention Image | ^3.x |
-| Container | Laravel Sail (Docker) | ^1.x |
+
+| Thành phần | Công nghệ                   | Version |
+| ---------- | --------------------------- | ------- |
+| Framework  | Laravel                     | 12.x    |
+| Ngôn ngữ   | PHP                         | 8.4     |
+| Database   | MySQL                       | 8.4     |
+| Auth       | Laravel Breeze + Socialite  | —       |
+| Search     | Laravel Scout + Meilisearch | —       |
+| Media      | Cloudinary                  | —       |
+| Queue      | Database driver             | —       |
+| Permission | spatie/laravel-permission   | ^6.x    |
+| Slug       | spatie/laravel-sluggable    | ^3.x    |
+| Image      | Intervention Image          | ^3.x    |
+| Container  | Laravel Sail (Docker)       | ^1.x    |
 
 ### Frontend
-| Thành phần | Công nghệ | Version |
-|---|---|---|
-| UI Framework | Vue 3 (Composition API) | ^3.x |
-| Bridge | Inertia.js | ^2.x |
-| CSS | Tailwind CSS | v4 |
-| Build Tool | Vite | ^7.x |
-| HTTP Client | Axios | ^1.x |
-| Icons | Heroicons | ^2.x |
+
+| Thành phần   | Công nghệ               | Version |
+| ------------ | ----------------------- | ------- |
+| UI Framework | Vue 3 (Composition API) | ^3.x    |
+| Bridge       | Inertia.js              | ^2.x    |
+| CSS          | Tailwind CSS            | v4      |
+| Build Tool   | Vite                    | ^7.x    |
+| HTTP Client  | Axios                   | ^1.x    |
+| Icons        | Heroicons               | ^2.x    |
 
 ### Hạ tầng
-| Thành phần | Công nghệ |
-|---|---|
-| Container | Docker Compose (Laravel Sail) |
-| Web Server | Nginx |
-| Testing | PHPUnit 11 + Pest |
-| Cache | Database driver |
+
+| Thành phần | Công nghệ                     |
+| ---------- | ----------------------------- |
+| Container  | Docker Compose (Laravel Sail) |
+| Web Server | Nginx                         |
+| Testing    | PHPUnit 11 + Pest             |
+| Cache      | Database driver               |
 
 ---
 
 ## Tính năng
 
 ### 🌐 Public (không cần đăng nhập)
+
 - Trang chủ với Featured Titles, mới nhất, theo thể loại
 - Danh sách phim: lọc theo thể loại, năm, ngôn ngữ, quốc gia
 - Tìm kiếm full-text siêu tốc (chịu lỗi chính tả) qua Meilisearch
@@ -70,6 +74,7 @@ CinemaDB là một nền tảng quản lý hồ sơ điện ảnh cộng đồng
 - Profile công khai `/users/{username}` — xem hồ sơ, badges, collections
 
 ### 👤 User (đã đăng nhập)
+
 - Viết, chỉnh sửa, xoá review của mình (hỗ trợ GIF qua Tenor API)
 - Đánh dấu "Helpful" cho review của người khác
 - Bình luận / thảo luận trên trang chi tiết phim (có reply, like, ẩn)
@@ -85,10 +90,12 @@ CinemaDB là một nền tảng quản lý hồ sơ điện ảnh cộng đồng
 - Đăng nhập bằng Google (OAuth 2.0)
 
 ### 🛡️ Moderator
+
 - Xem, ẩn và bỏ ẩn reviews vi phạm
 - Xem audit log của titles
 
 ### ⚙️ Admin
+
 - CRUD đầy đủ: Titles, Persons, Studios, Genres, Languages, Countries
 - Quản lý Series → Seasons → Episodes
 - Import phim tự động từ TMDB API
@@ -100,18 +107,23 @@ CinemaDB là một nền tảng quản lý hồ sơ điện ảnh cộng đồng
 ## Tính năng nâng cao
 
 ### 🔍 Smart Search
+
 Tìm kiếm siêu tốc dưới 50ms với khả năng chịu lỗi chính tả, instant search theo từng phím gõ, lọc đa tầng và hỗ trợ tiếng Việt — thông qua Laravel Scout + Meilisearch.
 
 ### 🏆 Gamification
+
 Hệ thống điểm uy tín (reputation), cấp bậc người dùng và huy hiệu (badges) được phát thưởng tự động qua Event/Listener khi người dùng có hoạt động tích cực (viết review, nhận helpful vote, đạt mốc...).
 
 ### 🌐 Social Graph
+
 Follow/Unfollow người dùng, Activity Feed cá nhân hoá, hệ thống thông báo và public profile đầy đủ.
 
 ### 🎬 TMDB Integration
+
 Import phim và người nổi tiếng tự động từ The Movie Database (TMDB) API thông qua Queue Jobs, giúp xây dựng dữ liệu nhanh chóng.
 
 ### 🖼️ GIF Support
+
 Tích hợp Tenor API cho phép đính kèm GIF trực tiếp trong reviews và bình luận.
 
 ---
@@ -194,31 +206,31 @@ php artisan test
 
 ## Cấu hình biến môi trường quan trọng
 
-| Biến | Mô tả |
-|---|---|
-| `DB_DATABASE` | Tên database MySQL |
-| `DB_USERNAME` | Username MySQL |
-| `DB_PASSWORD` | Password MySQL |
-| `CLOUDINARY_URL` | `cloudinary://api_key:api_secret@cloud_name` |
-| `MEILISEARCH_HOST` | URL tới Meilisearch (mặc định `http://meilisearch:7700`) |
-| `MEILISEARCH_KEY` | Master key của Meilisearch |
-| `TMDB_READ_ACCESS_TOKEN` | Read Access Token từ TMDB API |
-| `GOOGLE_CLIENT_ID` | Google OAuth Client ID |
-| `GOOGLE_CLIENT_SECRET` | Google OAuth Client Secret |
-| `GOOGLE_REDIRECT_URI` | Callback URL cho Google OAuth |
-| `MAIL_MAILER` | Driver gửi mail (`resend`, `smtp`, `log`...) |
-| `RESEND_API_KEY` | API key Resend (cho email production) |
-| `TENOR_API_KEY` | API key Tenor (cho tính năng GIF) |
+| Biến                     | Mô tả                                                    |
+| ------------------------ | -------------------------------------------------------- |
+| `DB_DATABASE`            | Tên database MySQL                                       |
+| `DB_USERNAME`            | Username MySQL                                           |
+| `DB_PASSWORD`            | Password MySQL                                           |
+| `CLOUDINARY_URL`         | `cloudinary://api_key:api_secret@cloud_name`             |
+| `MEILISEARCH_HOST`       | URL tới Meilisearch (mặc định `http://meilisearch:7700`) |
+| `MEILISEARCH_KEY`        | Master key của Meilisearch                               |
+| `TMDB_READ_ACCESS_TOKEN` | Read Access Token từ TMDB API                            |
+| `GOOGLE_CLIENT_ID`       | Google OAuth Client ID                                   |
+| `GOOGLE_CLIENT_SECRET`   | Google OAuth Client Secret                               |
+| `GOOGLE_REDIRECT_URI`    | Callback URL cho Google OAuth                            |
+| `MAIL_MAILER`            | Driver gửi mail (`resend`, `smtp`, `log`...)             |
+| `RESEND_API_KEY`         | API key Resend (cho email production)                    |
+| `TENOR_API_KEY`          | API key Tenor (cho tính năng GIF)                        |
 
 ---
 
 ## Tài khoản mặc định (sau seed)
 
-| Role | Email | Password |
-|---|---|---|
-| ADMIN | `admin@example.com` | `password` |
-| MODERATOR | `mod@example.com` | `password` |
-| USER | `user@example.com` | `password` |
+| Role      | Email               | Password   |
+| --------- | ------------------- | ---------- |
+| ADMIN     | `admin@example.com` | `password` |
+| MODERATOR | `mod@example.com`   | `password` |
+| USER      | `user@example.com`  | `password` |
 
 ---
 
@@ -256,17 +268,17 @@ docs/                       # Tài liệu kiến trúc chi tiết
 
 Xem thư mục [`docs/`](docs/) để biết chi tiết kiến trúc, database schema, kế hoạch triển khai và tính năng nâng cao.
 
-| File | Nội dung |
-|---|---|
-| [01-project-overview.md](docs/01-project-overview.md) | Tổng quan dự án & tech stack |
-| [02-architecture.md](docs/02-architecture.md) | Kiến trúc hệ thống & request flow |
-| [03-database-schema.md](docs/03-database-schema.md) | Schema database đầy đủ |
-| [04-backend-plan.md](docs/04-backend-plan.md) | Kế hoạch backend |
-| [05-frontend-plan.md](docs/05-frontend-plan.md) | Kế hoạch frontend & UI/UX |
-| [06-implementation-phases.md](docs/06-implementation-phases.md) | Lộ trình triển khai theo phase |
-| [07-advanced-features.md](docs/07-advanced-features.md) | Tính năng nâng cao (Search, Gamification...) |
-| [08-authorization-plan.md](docs/08-authorization-plan.md) | Phân quyền & authorization |
-| [09-inertia-props-spec.md](docs/09-inertia-props-spec.md) | Inertia props specification |
+| File                                                            | Nội dung                                     |
+| --------------------------------------------------------------- | -------------------------------------------- |
+| [01-project-overview.md](docs/01-project-overview.md)           | Tổng quan dự án & tech stack                 |
+| [02-architecture.md](docs/02-architecture.md)                   | Kiến trúc hệ thống & request flow            |
+| [03-database-schema.md](docs/03-database-schema.md)             | Schema database đầy đủ                       |
+| [04-backend-plan.md](docs/04-backend-plan.md)                   | Kế hoạch backend                             |
+| [05-frontend-plan.md](docs/05-frontend-plan.md)                 | Kế hoạch frontend & UI/UX                    |
+| [06-implementation-phases.md](docs/06-implementation-phases.md) | Lộ trình triển khai theo phase               |
+| [07-advanced-features.md](docs/07-advanced-features.md)         | Tính năng nâng cao (Search, Gamification...) |
+| [08-authorization-plan.md](docs/08-authorization-plan.md)       | Phân quyền & authorization                   |
+| [09-inertia-props-spec.md](docs/09-inertia-props-spec.md)       | Inertia props specification                  |
 
 ---
 

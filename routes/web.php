@@ -223,6 +223,8 @@ Route::prefix('admin')
         Route::get('/tmdb-import', [Admin\TmdbImportController::class, 'index'])->name('tmdb-import.index');
         Route::get('/tmdb-import/logs', [Admin\TmdbImportController::class, 'logs'])->name('tmdb-import.logs');
         Route::post('/tmdb-import', [Admin\TmdbImportController::class, 'store'])->name('tmdb-import.store');
+        Route::delete('/tmdb-import/{log}', [Admin\TmdbImportController::class, 'cancelJob'])->name('tmdb-import.cancel');
+        Route::post('/tmdb-import/cancel-all', [Admin\TmdbImportController::class, 'cancelAll'])->name('tmdb-import.cancel-all');
 
         // Badges CRUD
         Route::resource('badges', Admin\BadgeController::class)->except(['show']);
