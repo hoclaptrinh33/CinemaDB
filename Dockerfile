@@ -1,16 +1,32 @@
-# ─── Stage 1: Build frontend assets ──────────────────────────────────────────
+# ─── Stage 1: PHP vendor dependencies ────────────────────────────────────────
+FROM composer:2 AS vendor
+
+WORKDIR /app
+
+COPY composer.json composer.lock ./
+RUN composer install \
+        --no-dev \
+        --no-scripts \
+        --no-autoloader \
+        --ignore-platform-reqs \
+        --optimize-autoloader
+
+
+# ─── Stage 2: Build frontend assets ──────────────────────────────────────────
 FROM node:22-alpine AS assets
 
 WORKDIR /app
 
 COPY package.json package-lock.json ./
-RUN npm ci --frozen-lockfile --legacy-peer-deps
+RUN npm ci --legacy-peer-deps
 
 COPY . .
+# Ziggy reads vendor/tightenco/ziggy at build time — copy from composer stage
+COPY --from=vendor /app/vendor ./vendor
 RUN npm run build
 
 
-# ─── Stage 2: Production PHP image ────────────────────────────────────────────
+# ─── Stage 3: Production PHP image ────────────────────────────────────────────
 FROM php:8.2-fpm-bookworm
 
 # Install nginx, supervisor, and required system libraries in a single layer
@@ -51,20 +67,13 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# ── Install PHP dependencies (separate layer for Docker cache) ─────────────────
-COPY composer.json composer.lock ./
-RUN composer install \
-    --no-dev \
-    --no-scripts \
-    --no-autoloader \
-    --ignore-platform-reqs \
-    --optimize-autoloader
+# ── Copy vendor from composer stage ───────────────────────────────────────────
+COPY --from=vendor /app/vendor ./vendor
 
 # ── Copy application source ────────────────────────────────────────────────────
-# (vendor/ is excluded via .dockerignore so the container-built vendor/ is kept)
 COPY . .
 
-# ── Copy built frontend assets from Stage 1 ───────────────────────────────────
+# ── Copy built frontend assets from Stage 2 ───────────────────────────────────
 COPY --from=assets /app/public/build ./public/build
 
 # ── Finalise Composer autoloader and run package discovery ────────────────────
