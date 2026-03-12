@@ -29,38 +29,27 @@ RUN npm run build
 # ─── Stage 3: Production PHP image ────────────────────────────────────────────
 FROM php:8.2-fpm-bookworm
 
-# Install nginx, supervisor, and required system libraries in a single layer
-# (apt-get update + install in same RUN avoids stale cache issues)
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    nginx \
-    supervisor \
-    curl \
-    unzip \
-    libpng-dev \
-    libjpeg-dev \
-    libwebp-dev \
-    libzip-dev \
-    libxml2-dev \
-    libonig-dev \
-    && rm -rf /var/lib/apt/lists/*
+# Install nginx, supervisor, system libs + PHP extensions via install-php-extensions
+# (much faster than docker-php-ext-install — uses pre-built binaries)
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
 
-# Install PHP extensions required by this Laravel app
-RUN docker-php-ext-configure gd --with-jpeg --with-webp \
-    && docker-php-ext-install -j"$(nproc)" \
-    pdo pdo_mysql \
-    mbstring \
-    xml \
-    zip \
-    bcmath \
-    gd \
-    opcache \
-    pcntl \
-    sockets
-
-# Install Redis PHP extension from PECL
-RUN pecl install redis \
-    && docker-php-ext-enable redis \
-    && rm -rf /tmp/pear
+RUN chmod +x /usr/local/bin/install-php-extensions \
+    && apt-get update && apt-get install -y --no-install-recommends \
+        nginx \
+        supervisor \
+        unzip \
+    && rm -rf /var/lib/apt/lists/* \
+    && install-php-extensions \
+        pdo_mysql \
+        mbstring \
+        xml \
+        zip \
+        bcmath \
+        gd \
+        opcache \
+        pcntl \
+        sockets \
+        redis
 
 # Pull Composer binary from official image
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
