@@ -41,6 +41,7 @@ RUN chmod +x /usr/local/bin/install-php-extensions \
     && rm -rf /var/lib/apt/lists/* \
     && install-php-extensions \
     pdo_mysql \
+    pdo_pgsql \
     mbstring \
     xml \
     zip \
