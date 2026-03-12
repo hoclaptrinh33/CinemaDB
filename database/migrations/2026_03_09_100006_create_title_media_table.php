@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('title_media', function (Blueprint $table) {
-            $table->unsignedBigInteger('media_id')->autoIncrement()->primary();
+            $table->bigIncrements('media_id');
             $table->unsignedInteger('title_id');
             $table->enum('media_type', ['image', 'backdrop', 'trailer']);
             $table->string('url', 1024);

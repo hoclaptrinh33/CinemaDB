@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('title_comments', function (Blueprint $table) {
-            $table->unsignedBigInteger('comment_id')->autoIncrement()->primary();
+            $table->bigIncrements('comment_id');
             $table->unsignedInteger('title_id');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('parent_id')->nullable();

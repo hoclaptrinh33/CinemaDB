@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('title_nominations', function (Blueprint $table) {
-            $table->unsignedBigInteger('nomination_id')->autoIncrement()->primary();
+            $table->bigIncrements('nomination_id');
             $table->unsignedInteger('title_id');
             $table->unsignedBigInteger('user_id');
             $table->date('nominated_date'); // UTC date for daily limit logic
