@@ -1,6 +1,5 @@
 # fly.toml — generated for movie-database Laravel app
-# Replace 'your-app-name' with your actual Fly.io app name (from `fly launch`)
-app = "your-app-name"
+app = "cinemadb"
 primary_region = "sin"
 
 [build]
