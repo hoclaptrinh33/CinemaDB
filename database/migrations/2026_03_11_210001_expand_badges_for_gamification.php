@@ -9,7 +9,9 @@ return new class extends Migration
 {
     public function up(): void
     {
-        DB::statement("ALTER TABLE badges MODIFY tier ENUM('WOOD','IRON','BRONZE','SILVER','GOLD','PLATINUM','DIAMOND') NOT NULL DEFAULT 'BRONZE'");
+        if (DB::connection()->getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE badges MODIFY tier ENUM('WOOD','IRON','BRONZE','SILVER','GOLD','PLATINUM','DIAMOND') NOT NULL DEFAULT 'BRONZE'");
+        }
 
         Schema::table('badges', function (Blueprint $table) {
             $table->string('category', 50)->default('general')->after('tier');
@@ -38,6 +40,8 @@ return new class extends Migration
             ]);
         });
 
-        DB::statement("ALTER TABLE badges MODIFY tier ENUM('BRONZE','SILVER','GOLD','PLATINUM') NOT NULL DEFAULT 'BRONZE'");
+        if (DB::connection()->getDriverName() === 'mysql') {
+            DB::statement("ALTER TABLE badges MODIFY tier ENUM('BRONZE','SILVER','GOLD','PLATINUM') NOT NULL DEFAULT 'BRONZE'");
+        }
     }
 };
