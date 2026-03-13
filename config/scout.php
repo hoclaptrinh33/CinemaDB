@@ -140,9 +140,23 @@ return [
         'host' => env('MEILISEARCH_HOST', 'http://localhost:7700'),
         'key' => env('MEILISEARCH_KEY'),
         'index-settings' => [
-            // 'users' => [
-            //     'filterableAttributes'=> ['id', 'name', 'email'],
-            // ],
+            // Cấu hình filterableAttributes cho model Title.
+            // Bắt buộc phải có để Meilisearch chấp nhận filter queries.
+            // Sau khi thay đổi, chạy: php artisan scout:sync-index-settings
+            \App\Models\Title::class => [
+                'filterableAttributes' => [
+                    'title_type',
+                    'release_year',
+                    'avg_rating',
+                    'visibility',
+                    'original_language_id',
+                ],
+                'sortableAttributes' => [
+                    'avg_rating',
+                    'release_year',
+                    'rating_count',
+                ],
+            ],
         ],
     ],
 
