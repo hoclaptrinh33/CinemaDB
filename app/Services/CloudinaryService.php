@@ -48,7 +48,9 @@ class CloudinaryService
             return $this->client;
         }
 
-        $url = env('CLOUDINARY_URL');
+        // Dùng config() thay vì env() để hoạt động đúng khi production
+        // chạy php artisan config:cache (env() sẽ trả về null sau khi cache)
+        $url = config('cloudinary.url');
 
         if (blank($url)) {
             throw new RuntimeException('Cloudinary is not configured.');
@@ -59,7 +61,8 @@ class CloudinaryService
 
     private function hasConfiguration(): bool
     {
-        return filled(env('CLOUDINARY_URL'));
+        // Dùng config() thay vì env() để hoạt động đúng khi production dùng config:cache
+        return filled(config('cloudinary.url'));
     }
 
     /**

@@ -89,7 +89,8 @@ class Title extends Model
 
     public function shouldBeSearchable(): bool
     {
-        return $this->visibility === 'PUBLIC';
+        // Chỉ index những bản ghi PUBLIC và KHÔNG phải là EPISODE
+        return $this->visibility === 'PUBLIC' && $this->title_type !== 'EPISODE';
     }
 
     // ── Relationships ─────────────────────────────────────────────────────
