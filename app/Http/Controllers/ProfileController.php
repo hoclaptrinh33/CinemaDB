@@ -64,10 +64,12 @@ class ProfileController extends Controller
             ->count();
 
         return Inertia::render('Profile/Edit', [
-            'mustVerifyEmail' => $user instanceof MustVerifyEmail,
+            'mustVerifyEmail' => $user instanceof MustVerifyEmail && ! $user->hasVerifiedEmail(),
             'status'          => session('status'),
+
             'user'            => [
                 'name'         => $user->name,
+
                 'username'     => $user->username,
                 'email'        => $user->email,
                 'role'         => $user->role,

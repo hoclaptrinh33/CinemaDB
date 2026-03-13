@@ -61,6 +61,11 @@ Route::middleware('auth')->group(function () {
     // Profile view
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
 
+    // Upload avatar và cover — chỉ cần đăng nhập, không cần verified email
+    // (user Google đã xác thực qua OAuth, không nên bị chặn bởi middleware verified)
+    Route::post('/profile/avatar', [ProfileController::class, 'uploadAvatar'])->name('profile.avatar');
+    Route::post('/profile/cover', [ProfileController::class, 'uploadCover'])->name('profile.cover');
+
     // Activity Log
     Route::get('/activity-log', [ActivityLogController::class, 'index'])->name('activity-log.index');
 
@@ -84,8 +89,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Profile write
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::post('/profile/avatar', [ProfileController::class, 'uploadAvatar'])->name('profile.avatar');
-    Route::post('/profile/cover', [ProfileController::class, 'uploadCover'])->name('profile.cover');
 
     // Reviews
     Route::post('/titles/{title}/reviews', [ReviewController::class, 'store'])
